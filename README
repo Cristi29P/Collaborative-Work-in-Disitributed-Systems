@@ -1,0 +1,44 @@
+331CA Paris Cristian-Tanase
+
+Nota de inceput: 
+	Am scris programul de la bun inceput pentru bonus, adica nu conteaza
+daca parametrul de eroare_comunicatie este 0/1, intrucat toata comunicatia
+in logica mea se realizeaza oricum fara legatura dintre 0 si 1 (deci toate infor-
+matiile dintre acestea sunt trimite prin 2). Sper ca acest lucru sa faca putin
+mai usor de inteles codul de la bun inceput si sa raspunda la eventualele nelamuriri
+referitoare la faptul ca transmiterea prin COORD2 este mai lunga si mai speciala.
+
+	Programul incepe prin citirea fiecarui cluster de catre coordonatorul
+aferent. Odata ce coordonatorul stie care sunt workerii lui, le trimite acestora
+propriul rank, pentru a le da de stire care e cluster-ul in care se afla.
+	Urmatoarea etapa consta in schimbul de informatii legate de clustere intre
+cei 3 coordonatori ai topologiei. Odata primita topologia de la ceilalti coordona-
+tori, fiecare printeaza topologia completa.
+	Coordonatorii trimit informatia legata de topologie catre workerii lor si,
+odata primita, acestia o printeaza.
+	COORD0 creeaza vectorul cu numerele initiale, calculeza cate elemente si
+ce bucati din vector trebuie sa fie trimise catre ceilalti coordonatori si le 
+trimite cu offset-ul aferent. Dupa, are grija sa trimita propria sa bucata de
+vector workerilor sai si asteapta sa o primeasca de la acestia dublata. Bucata
+primita este introdusa intr-un array si apoi se asteapta in ordine si celelalte
+bucati de vector dublate de la ceilalti coordonatori.
+	COORD1 si COORD2 primesc bucatile de vector de la COORD0, le impart egal
+intre workerii din propriile clustere si le trimit spre a fi dublate. In plus, 
+COORD2 are grija sa ruteze informatiile de la COORD0 dintre COORD1.
+	Workerii dubleaza elementele si le trimit inapoi la coordonatorul asignat.
+	Dupa ce procesul de dublare se termina si vectorul final este reasamblat
+de catre COORD0, se printeaza rezultatul.
+
+
+Anexa explicatii:
+	Dupa cum se vede si in fisierul de tip header, exista mai multe tag-uri
+definite care descriu mai multe actiuni si care usureaza citirea codului si asigura
+o ordine si o logica in primirea informatiilor. Sunt similare unor reguli dintr-un
+protocol de comunicatie.
+	
+	Liniile de cod 28-32 din tema3.cpp:
+	-> 100 + 10 * rank + i ===> va generea un numar care se va mapa pe un tag
+				     din define-uri. Numarul are urmatoarea semnificatie:
+				     Cifra sutelor: 1 - denota mesaje de comunicare
+				     Cifra zecilor: rank - denota sursa mesajului
+				     Cifra unitatilor: i - denota dest mesajului
